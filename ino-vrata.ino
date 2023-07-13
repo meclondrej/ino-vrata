@@ -34,6 +34,14 @@
 #define SMER_OTEVRIT HIGH
 #define SMER_ZAVRIT LOW
 
+// casy
+#define ZDRZENI_MS 15000
+#define ZDRZENI_POJISTKA_L_MS 5000
+#define ZDRZENI_POJISTKA_R_MS 3000
+#define BEEP_POCET 3
+#define BEEP_CAS_MS 100
+#define BEEP_CAS_CEKANI_MS 300
+
 /*
  * Globalni promenne
  */
@@ -81,11 +89,11 @@ int stavVrat(int vrata)
 
 void beep() // trikrat pipne
 {
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < BEEP_POCET; i++) {
         digitalWrite(ALARM, HIGH);
-        delay(100);
+        delay(BEEP_CAS_MS);
         digitalWrite(ALARM, LOW);
-        delay(300);
+        delay(BEEP_CAS_CEKANI_MS);
     }
 }
 
@@ -125,7 +133,7 @@ void loop()
     digitalWrite(AKTIVNI, HIGH);
     if (otevrit)
     {
-        int zdrzeni = 15000; // zdrzeni praveho kridla pred levym 15s
+        int zdrzeni = ZDRZENI_MS; // zdrzeni praveho kridla pred levym 15s
         // zmenit oboum kridlum smery
         digitalWrite(VRATA_L_SMER, SMER_OTEVRIT);
         digitalWrite(VRATA_R_SMER, SMER_OTEVRIT);
@@ -134,7 +142,7 @@ void loop()
         if (stavVrat(VRATA_L) == STAV_ZAVRENO && stavVrat(VRATA_R) != STAV_ZAVRENO)
         { // POJISTKA: pokud je leve kridlo jiz zavrene a prave ne, nechat prave na 3 sekundy otevirat, aby se predeslo zniceni hran
             digitalWrite(VRATA_R_SMER, SMER_OTEVRIT);
-            int r_cas = 3000;
+            int r_cas = ZDRZENI_POJISTKA_R_MS;
             for (;;)
             {
                 if (r_cas != 0 && stavVrat(VRATA_L) != STAV_OTEVRENO)
@@ -189,7 +197,7 @@ void loop()
         }
         otevrit = false; // zmeni smer dalsiho spusteni na zavirani
     } else {
-        int zdrzeni = 15000; // zdrzeni leveho kridla pred pravym 15s
+        int zdrzeni = ZDRZENI_MS; // zdrzeni leveho kridla pred pravym 15s
         // zmenit oboum kridlum smery
         digitalWrite(VRATA_L_SMER, SMER_ZAVRIT);
         digitalWrite(VRATA_R_SMER, SMER_ZAVRIT);
@@ -199,8 +207,8 @@ void loop()
         { // POJISTKA: pokud je leve kridlo jiz zavrene a prave ne, nechat obe otevirat tak, aby se predeslo zniceni hran
             digitalWrite(VRATA_L_SMER, SMER_OTEVRIT);
             digitalWrite(VRATA_R_SMER, SMER_OTEVRIT);
-            int l_cas = 5000;
-            int r_cas = 3000;
+            int l_cas = ZDRZENI_POJISTKA_L_MS;
+            int r_cas = ZDRZENI_POJISTKA_R_MS;
             for (;;)
             {
                 if (l_cas != 0 && stavVrat(VRATA_L) != STAV_OTEVRENO)
