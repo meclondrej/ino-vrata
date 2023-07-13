@@ -131,6 +131,25 @@ void loop()
         digitalWrite(VRATA_R_SMER, SMER_OTEVRIT);
         bool hotovoL = false;
         bool hotovoR = false;
+        if (stavVrat(VRATA_L) == STAV_ZAVRENO && stavVrat(VRATA_R) != STAV_ZAVRENO)
+        { // POJISTKA: pokud je leve kridlo jiz zavrene a prave ne, nechat prave na 3 sekundy otevirat, aby se predeslo zniceni hran
+            digitalWrite(VRATA_R_SMER, SMER_OTEVRIT);
+            int r_cas = 3000;
+            for (;;)
+            {
+                if (r_cas != 0 && stavVrat(VRATA_L) != STAV_OTEVRENO)
+                {
+                    digitalWrite(VRATA_L_MOTOR, HIGH);
+                    r_cas -= 10;
+                }
+                else
+                {
+                    digitalWrite(VRATA_L_MOTOR, LOW);
+                    break;
+                }
+            }
+            digitalWrite(VRATA_R_SMER, SMER_ZAVRIT);
+        }
         for (;;) // terminovatelna nekonecna smycka pro kontrolu vrat
         {
             if (!hotovoL && stavVrat(VRATA_L) != STAV_OTEVRENO) // pokud leve kridlo neni otevrene, otevirat, pokud ano tak prestat
@@ -170,12 +189,39 @@ void loop()
         digitalWrite(VRATA_R_SMER, SMER_ZAVRIT);
         bool hotovoL = false;
         bool hotovoR = false;
-        if (stavVrat(VRATA_L) == STAV_ZAVRENO && stavVrat(VRATA_R) != STAV_ZAVRENO) { // POJISTKA: pokud je leve kridlo jiz zavrene a prave ne, nechat leve na 5 sekund otevirat, aby se predeslo zniceni hran
+        if (stavVrat(VRATA_L) == STAV_ZAVRENO && stavVrat(VRATA_R) != STAV_ZAVRENO)
+        { // POJISTKA: pokud je leve kridlo jiz zavrene a prave ne, nechat obe otevirat tak, aby se predeslo zniceni hran
             digitalWrite(VRATA_L_SMER, SMER_OTEVRIT);
-            digitalWrite(VRATA_L_MOTOR, HIGH);
-            delay(5000);
-            digitalWrite(VRATA_L_MOTOR, LOW);
+            digitalWrite(VRATA_R_SMER, SMER_OTEVRIT);
+            int l_cas = 5000;
+            int r_cas = 3000;
+            for (;;)
+            {
+                if (l_cas != 0 && stavVrat(VRATA_L) != STAV_OTEVRENO)
+                {
+                    digitalWrite(VRATA_L_MOTOR, HIGH);
+                    l_cas -= 10;
+                }
+                else
+                {
+                    digitalWrite(VRATA_L_MOTOR, LOW);
+                }
+                if (l_cas != 0 && stavVrat(VRATA_L) != STAV_OTEVRENO)
+                {
+                    digitalWrite(VRATA_L_MOTOR, HIGH);
+                    l_cas -= 10;
+                }
+                else
+                {
+                    digitalWrite(VRATA_L_MOTOR, LOW);
+                }
+                if (l_cas == 0 && r_cas == 0)
+                {
+                    break;
+                }
+            }
             digitalWrite(VRATA_L_SMER, SMER_ZAVRIT);
+            digitalWrite(VRATA_R_SMER, SMER_ZAVRIT);
         }
         for (;;) // terminovatelna nekonecna smycka pro kontrolu vrat
         {
