@@ -161,7 +161,7 @@ void loop()
                 digitalWrite(VRATA_L_MOTOR, LOW);
                 hotovoL = true;
             }
-            if (!hotovoR || (zdrzeni == 0 && stavVrat(VRATA_R) != STAV_OTEVRENO)) // pokud prave kridlo jiz nema zdrzeni a neni otevrene, otevirat, jinak prestat
+            if (!hotovoR && ((zdrzeni == 0 || hotovoL) && stavVrat(VRATA_R) != STAV_OTEVRENO)) // pokud prave kridlo jiz nema zdrzeni a neni otevrene, otevirat, jinak prestat
             {
                 digitalWrite(VRATA_R_MOTOR, HIGH);
             }
@@ -225,7 +225,7 @@ void loop()
         }
         for (;;) // terminovatelna nekonecna smycka pro kontrolu vrat
         {
-            if (!hotovoL || (zdrzeni == 0 && stavVrat(VRATA_L) != STAV_ZAVRENO)) // pokud leve kridlo jiz nema zdrzeni a neni zavrene, zavirat, jinak prestat
+            if (!hotovoL && ((zdrzeni == 0 || hotovoR) && stavVrat(VRATA_L) != STAV_ZAVRENO)) // pokud leve kridlo jiz nema zdrzeni a neni zavrene, zavirat, jinak prestat
             {
                 digitalWrite(VRATA_L_MOTOR, HIGH);
             }
