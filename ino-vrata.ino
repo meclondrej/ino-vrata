@@ -147,6 +147,12 @@ void loop()
                     digitalWrite(VRATA_L_MOTOR, LOW);
                     break;
                 }
+                if (digitalRead(SPOUSTEC) == LOW)
+                { // Pokud je stisknut spoustec pri prubehu pojistky, terminovat pojistku i nasledujici smycku
+                    hotovoL = true;
+                    hotovoR = true;
+                    break;
+                }
             }
             digitalWrite(VRATA_R_SMER, SMER_ZAVRIT);
         }
@@ -217,6 +223,12 @@ void loop()
                 }
                 if (l_cas == 0 && r_cas == 0)
                 {
+                    break;
+                }
+                if (digitalRead(SPOUSTEC) == LOW)
+                { // Pokud je stisknut spoustec pri prubehu pojistky, terminovat pojistku i nasledujici smycku
+                    hotovoL = true;
+                    hotovoR = true;
                     break;
                 }
             }
