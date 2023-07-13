@@ -208,7 +208,7 @@ void loop()
                 zdrzeni -= 10;
             }
         }
-        otevrit = false; // zmeni smer dalsiho spusteni na zavirani
+        otevrit = true; // zmeni smer dalsiho spusteni na zavirani
     }
     digitalWrite(AKTIVNI, LOW);
 }
